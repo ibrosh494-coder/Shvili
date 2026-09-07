@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель — Швили</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root {
+  --g950:#051a12;--g900:#0a2e1f;--g800:#0f4d35;--g700:#166b4a;--g600:#1e8a61;--g500:#28a878;--g400:#4cc99a;--g300:#7dd9b5;--g200:#b0e9d1;--g100:#e0f5ec;--g50:#f0faf5;
+  --au600:#b8942f;--au500:#d4a843;--au400:#e8c46a;--au300:#f5dda0;--au200:#faf0d0;
+  --cream:#f8f6f1;--white:#fff;
+  --tx1:#0f241c;--tx2:#3d5c4f;--tx3:#6b8f7e;--tx4:#9ab5a8;
+  --glass:rgba(255,255,255,0.06);--glassb:rgba(255,255,255,0.12);
+  --sh1:0 1px 3px rgba(5,26,18,0.04);--sh2:0 2px 8px rgba(5,26,18,0.06);--sh3:0 8px 30px rgba(5,26,18,0.10);--sh4:0 20px 60px rgba(5,26,18,0.14);
+  --rsm:10px;--rmd:16px;--rlg:24px;--rxl:32px;--rfull:9999px;
+  --eo:cubic-bezier(0.16,1,0.3,1);--es:cubic-bezier(0.4,0,0.2,1);
+  --red:#dc5040;--red-bg:rgba(220,80,60,0.12);--red-border:rgba(220,80,60,0.3);
+  --green:#28a878;--green-bg:rgba(40,168,120,0.12);--green-border:rgba(40,168,120,0.3);
+  --yellow:#d4a843;--yellow-bg:rgba(212,168,67,0.12);--yellow-border:rgba(212,168,67,0.3);
+  --slate:#f1ede6;--slate-border:#e5dfd2;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--tx1);line-height:1.6;min-height:100vh}
+
+/* ===== Login ===== */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(170deg,var(--g950) 0%,var(--g900) 45%,var(--g800) 100%)}
+.login-card{width:100%;max-width:400px;background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);border:1px solid var(--glassb);border-radius:var(--rxl);padding:40px 32px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.3)}
+.login-logo{font-size:24px;font-weight:700;letter-spacing:6px;color:var(--white);margin-bottom:6px}
+.login-logo span{color:var(--au500)}
+.login-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px}
+.field{margin-bottom:18px;text-align:left}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:7px}
+.field-label-dark label{color:rgba(255,255,255,0.4)}
+.field input,.field select,.field textarea{width:100%;min-height:46px;padding:13px 16px;background:var(--white);border:1.5px solid #dde8e2;border-radius:var(--rmd);color:var(--tx1);font-size:14px;transition:border-color .25s var(--es);box-sizing:border-box}
+.field-dark input,.field-dark select,.field-dark textarea{background:rgba(255,255,255,0.06);border:1.5px solid var(--glassb);color:var(--white)}
+.field-dark input::placeholder,.field-dark textarea::placeholder{color:rgba(255,255,255,0.25)}
+.field input::placeholder,.field textarea::placeholder{color:var(--tx4)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--g500)}
+.field-dark input:focus,.field-dark select:focus,.field-dark textarea:focus{border-color:var(--au500)}
+.field textarea{min-height:80px;resize:vertical}
+.field select{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e8a61' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:15px}
+.field-dark select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4a843' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")}
+.field select option,.field-dark select option{background:#fff;color:var(--tx1)}
+.field-dark select option{background:var(--g900);color:#fff}
+.field .arow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.login-btn{width:100%;min-height:48px;border-radius:var(--rfull);background:var(--au500);color:var(--g950);font-size:15px;font-weight:700;letter-spacing:.3px;border:none;cursor:pointer;transition:all .3s var(--eo);margin-top:4px}
+.login-btn:hover{background:var(--au400);transform:translateY(-2px);box-shadow:0 10px 28px rgba(212,168,67,0.3)}
+.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.login-msg{font-size:13px;padding:11px 14px;border-radius:var(--rmd);margin-bottom:16px;display:none;line-height:1.5}
+.login-msg.err{display:block;background:var(--red-bg);border:1px solid var(--red-border);color:#f5a8a0}
+.login-msg.ok{display:block;background:var(--green-bg);border:1px solid var(--green-border);color:var(--g300)}
+.login-back{display:inline-block;margin-top:20px;font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s}
+.login-back:hover{color:var(--au400)}
+
+/* ===== Layout ===== */
+.admin{display:none;min-height:100vh}
+.admin.visible{display:block}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:264px;background:linear-gradient(185deg,var(--g950),var(--g900));border-right:1px solid var(--glassb);display:flex;flex-direction:column;z-index:160;transform:translateX(0);transition:transform .35s var(--eo)}
+.sidebar-logo{font-size:20px;font-weight:700;letter-spacing:5px;color:var(--white);padding:26px 26px 18px}
+.sidebar-logo span{color:var(--au500)}
+.sidebar-logo .side-sub{display:block;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.30);margin-top:4px;font-weight:600}
+.nav{flex:1;overflow-y:auto;padding:8px 14px}
+.nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;border-radius:var(--rmd);background:transparent;border:none;color:rgba(255,255,255,0.62);font-size:13.5px;font-weight:600;cursor:pointer;transition:all .25s var(--es);margin-bottom:2px;text-align:left}
+.nav-item .n-ico{width:20px;text-align:center;font-size:15px}
+.nav-item:hover{background:var(--glass);color:var(--white)}
+.nav-item.active{background:var(--au500);color:var(--g950)}
+.side-foot{padding:16px;border-top:1px solid var(--glassb)}
+.side-user{display:flex;flex-direction:column;gap:2px;margin-bottom:12px;overflow:hidden}
+.side-user b{font-size:13px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side-user span{font-size:10.5px;letter-spacing:1px;color:var(--au400);font-weight:700;text-transform:uppercase}
+.logout-btn{padding:9px 16px;border-radius:var(--rfull);border:1.5px solid rgba(255,255,255,0.16);background:transparent;color:rgba(255,255,255,0.6);font-size:12px;font-weight:600;cursor:pointer;transition:all .3s var(--es);width:100%}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(5,10,8,0.5);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s}
+.sidebar-overlay.show{opacity:1;pointer-events:all}
+
+.main{margin-left:264px;min-height:100vh;display:flex;flex-direction:column}
+.navbar{position:sticky;top:0;z-index:100;background:rgba(248,246,241,0.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,0.05);padding:14px 30px;display:flex;align-items:center;gap:16px}
+.navbar h1{font-size:19px;font-weight:700;color:var(--tx1);flex:1}
+.burger{display:none;width:40px;height:40px;border-radius:12px;border:1.5px solid #dde8e2;background:var(--white);font-size:17px;cursor:pointer;color:var(--g700)}
+.nav-right{display:flex;align-items:center;gap:14px}
+.topbar-user{font-size:13px;color:var(--tx3)}
+.topbar-user b{color:var(--tx1);font-weight:600}
+.content{padding:28px 30px 60px;max-width:1280px;width:100%;margin:0 auto}
+.section{display:none}
+.section.active{display:block;animation:fadeUp .35s var(--eo)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ===== Cards / common ===== */
+.card{background:var(--white);border-radius:var(--rlg);box-shadow:var(--sh1);border:1px solid rgba(0,0,0,0.03)}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.sec-head h2{font-size:19px;font-weight:700;color:var(--tx1)}
+.sec-head .hint{font-size:12.5px;color:var(--tx3)}
+.btn{padding:9px 18px;border-radius:var(--rfull);font-size:12.5px;font-weight:700;border:none;cursor:pointer;transition:all .25s var(--eo);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn.gold{background:var(--au500);color:var(--g950)}
+.btn.gold:hover{background:var(--au400);transform:translateY(-1px)}
+.btn.green{background:var(--g700);color:var(--white)}
+.btn.green:hover{background:var(--g600);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--tx2);border:1.5px solid #dde8e2}
+.btn.ghost:hover{background:var(--g50);color:var(--g600);border-color:var(--g500)}
+.btn.danger{background:var(--red-bg);color:var(--red);border:1.5px solid var(--red-border)}
+.btn.danger:hover{background:var(--red);color:#fff}
+.btn.small{padding:6px 12px;font-size:11px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:26px}
+.stat-card{background:var(--white);border-radius:var(--rlg);padding:20px 18px;box-shadow:var(--sh1);border:1px solid rgba(0,0,0,0.03);position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--g500);opacity:.85}
+.stat-card.gold::after{background:var(--au500)}
+.stat-card.red::after{background:var(--red)}
+.stat-card .label{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px}
+.stat-card .value{font-size:27px;font-weight:700;color:var(--g700);line-height:1.1;font-variant-numeric:tabular-nums}
+.stat-card .value.yellow{color:var(--au600)}
+.stat-card .value.green{color:var(--g600)}
+.stat-card .value.red{color:var(--red)}
+.stat-card .sub{font-size:11px;color:var(--tx4);margin-top:4px}
+
+.panel{background:var(--white);border-radius:var(--rlg);box-shadow:var(--sh1);border:1px solid rgba(0,0,0,0.03);padding:20px;margin-bottom:20px}
+.panel h3{font-size:14px;font-weight:700;color:var(--tx1);margin-bottom:14px;letter-spacing:.3px}
+
+.empty-state{text-align:center;padding:48px 20px;color:var(--tx3)}
+.empty-state .icon{font-size:44px;margin-bottom:12px;display:block;opacity:.5}
+.empty-state p{font-size:14px}
+
+/* ===== Status badges ===== */
+.status-badge{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:4px 12px;border-radius:var(--rfull);white-space:nowrap}
+.status-badge.pending{background:var(--yellow-bg);color:var(--au600);border:1px solid var(--yellow-border)}
+.status-badge.confirmed{background:var(--green-bg);color:var(--g600);border:1px solid var(--green-border)}
+.status-badge.rejected{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.status-badge.cancelled{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);opacity:.75}
+.status-badge.completed{background:var(--green-bg);color:var(--g600);border:1px solid var(--green-border);opacity:.75}
+.status-badge.no_show{background:var(--slate);color:#8a7f6e;border:1px solid var(--slate-border)}
+.status-badge.active{background:var(--green-bg);color:var(--g600);border:1px solid var(--green-border)}
+.status-badge.blocked{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.status-badge.invited{background:var(--yellow-bg);color:var(--au600);border:1px solid var(--yellow-border)}
+.status-badge.deleted{background:var(--slate);color:#8a7f6e;border:1px solid var(--slate-border)}
+.role-chip{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 10px;border-radius:var(--rfull);background:var(--g100);color:var(--g700);border:1px solid var(--g200);text-transform:uppercase}
+
+/* ===== Bookings ===== */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.filter-bar input{flex:1;min-width:200px;padding:10px 16px;border:1.5px solid #dde8e2;border-radius:var(--rmd);font-size:14px;background:var(--white);color:var(--tx1);transition:border-color .2s}
+.filter-bar input:focus{outline:none;border-color:var(--g500)}
+.filter-bar input::placeholder{color:var(--tx4)}
+.chip{padding:8px 16px;border-radius:var(--rfull);border:1.5px solid #dde8e2;background:transparent;font-size:12px;font-weight:600;color:var(--tx2);cursor:pointer;transition:all .25s var(--eo)}
+.chip:hover{border-color:var(--g500);color:var(--g600)}
+.chip.active{background:var(--g700);color:var(--white);border-color:var(--g700)}
+.bookings-wrap{background:var(--white);border-radius:var(--rlg);box-shadow:var(--sh1);border:1px solid rgba(0,0,0,0.03);overflow-x:auto}
+.bookings-table{width:100%;border-collapse:collapse;min-width:760px}
+.bookings-table th{background:var(--g50);padding:13px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid rgba(0,0,0,0.05);white-space:nowrap}
+.bookings-table td{padding:13px 14px;border-bottom:1px solid rgba(0,0,0,0.04);font-size:13.5px;color:var(--tx1);vertical-align:middle}
+.bookings-table tr:last-child td{border-bottom:none}
+.bookings-table tr:hover td{background:rgba(40,168,120,0.03)}
+.bookings-table .guest-name{font-weight:600}
+.bookings-table .guest-phone{font-size:12.5px;color:var(--tx2)}
+.bookings-table .date-cell{white-space:nowrap;font-variant-numeric:tabular-nums}
+.bookings-table .guests-cell{text-align:center;font-weight:600}
+.actions{display:flex;gap:6px;flex-wrap:wrap;max-width:340px}
+.btn-confirm,.btn-cancel,.btn-delete,.btn-edit,.btn-muted{padding:7px 13px;border-radius:var(--rfull);font-size:11px;font-weight:700;letter-spacing:.3px;border:none;cursor:pointer;transition:all .25s var(--eo);white-space:nowrap}
+.btn-confirm{background:var(--green-bg);color:var(--g700);border:1px solid var(--green-border)}
+.btn-confirm:hover{background:var(--g600);color:var(--white);border-color:var(--g600)}
+.btn-cancel{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.btn-cancel:hover{background:var(--red);color:var(--white);border-color:var(--red)}
+.btn-muted{background:transparent;color:var(--tx3);border:1px solid #dde8e2}
+.btn-muted:hover{background:var(--g50);color:var(--g600);border-color:var(--g500)}
+.btn-edit{background:transparent;color:var(--au600);border:1px solid var(--yellow-border)}
+.btn-edit:hover{background:var(--au500);color:var(--g950);border-color:var(--au500)}
+.btn-delete{background:transparent;color:var(--tx4);border:1px solid transparent;padding:7px 10px}
+.btn-delete:hover{color:var(--red);background:var(--red-bg)}
+
+/* ===== Modals (dark) ===== */
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(5,10,8,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s var(--es);padding:20px}
+.overlay.open{opacity:1;pointer-events:all}
+.modal-card{width:100%;max-width:520px;background:linear-gradient(165deg,var(--g900),var(--g950));border:1px solid var(--glassb);border-radius:var(--rxl);padding:30px 26px;position:relative;transform:scale(0.95) translateY(10px);transition:transform .35s var(--eo);box-shadow:0 30px 80px rgba(0,0,0,0.4);max-height:88vh;overflow-y:auto}
+.overlay.open .modal-card{transform:scale(1) translateY(0)}
+.modal-card.wide{max-width:680px}
+.modal-card h3{font-size:18px;font-weight:700;color:var(--white);margin-bottom:20px;padding-right:40px}
+.modal-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:var(--white);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;flex-shrink:0}
+.modal-close:hover{background:rgba(255,255,255,0.18);transform:rotate(90deg)}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.modal-actions button{flex:1;min-height:44px;padding:12px;border-radius:var(--rfull);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .25s var(--eo)}
+.m-save{background:var(--au500);color:var(--g950)}
+.m-save:hover{background:var(--au400);transform:translateY(-1px)}
+.m-cancel{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid var(--glassb)!important}
+.m-cancel:hover{background:rgba(255,255,255,0.14)}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.detail-row:last-child{border-bottom:none}
+.detail-label{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:2px}
+.detail-value{font-size:13.5px;color:rgba(255,255,255,0.85);font-weight:500;word-break:break-word}
+.detail-gal{font-size:10.5px;color:var(--au400);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.detail-note{font-size:12px;color:var(--au300);margin:10px 0 16px;line-height:1.5}
+.editban{display:inline-block;font-size:11px;font-weight:600;color:var(--au400);margin-left:8px}
+.detail-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.detail-actions button{flex:1;min-height:42px;padding:11px 14px;border-radius:var(--rfull);font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all .25s var(--eo)}
+
+/* ===== Users ===== */
+.users-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.user-card{padding:18px;display:flex;flex-direction:column;gap:12px}
+.user-top{display:flex;align-items:center;gap:12px}
+.avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--g800),var(--g600));color:var(--white);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex-shrink:0;text-transform:uppercase}
+.user-name{font-weight:600;font-size:14.5px;color:var(--tx1);line-height:1.25}
+.user-mail{font-size:12px;color:var(--tx3);word-break:break-all}
+.user-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.user-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.user-foot{font-size:11.5px;color:var(--tx4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+
+/* ===== Tables ===== */
+.tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.table-card{padding:16px;border-radius:var(--rlg);background:var(--white);box-shadow:var(--sh1);border:1px solid rgba(0,0,0,0.03);display:flex;flex-direction:column;gap:8px}
+.table-card .t-num{font-size:15px;font-weight:700;color:var(--tx1)}
+.table-card .t-num span{font-size:11px;color:var(--tx4);font-weight:600;margin-left:6px}
+.table-card .t-info{font-size:12.5px;color:var(--tx2);display:flex;justify-content:space-between}
+.table-card .t-btns{display:flex;gap:6px;flex-wrap:wrap}
+.t-status{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 10px;border-radius:var(--rfull)}
+.t-status.free{background:var(--green-bg);color:var(--g600);border:1px solid var(--green-border)}
+.t-status.reserved{background:var(--yellow-bg);color:var(--au600);border:1px solid var(--yellow-border)}
+.t-status.occupied{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+
+/* ===== Notifications ===== */
+.notif-item{display:flex;gap:12px;padding:13px 6px;border-bottom:1px solid rgba(0,0,0,0.05);align-items:flex-start;cursor:pointer;transition:background .2s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:var(--g50)}
+.notif-item.unread{background:rgba(212,168,67,0.06)}
+.notif-ico{width:36px;height:36px;border-radius:12px;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.notif-body{flex:1;min-width:0}
+.notif-body b{font-size:13px;color:var(--tx1);display:block}
+.notif-body p{font-size:12.5px;color:var(--tx3);line-height:1.4}
+.notif-time{font-size:11px;color:var(--tx4)}
+.notif-dot{width:9px;height:9px;border-radius:50%;background:var(--au500);flex-shrink:0;margin-top:8px}
+.notif-dot.read{background:transparent}
+.bell-wrap{position:relative}
+.bell-btn{position:relative;padding:9px 15px;border-radius:var(--rfull);border:1.5px solid rgba(212,168,67,0.4);background:transparent;color:var(--au600);font-size:14px;cursor:pointer;transition:all .25s var(--eo)}
+.bell-btn:hover{border-color:var(--au400);background:var(--yellow-bg)}
+.bell-count{position:absolute;top:-7px;right:-5px;background:var(--red);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 2px 8px rgba(220,80,60,0.4)}
+.bell-drop{position:absolute;top:calc(100% + 10px);right:0;width:340px;max-height:420px;overflow-y:auto;background:var(--white);border-radius:var(--rmd);box-shadow:var(--sh4);border:1px solid rgba(0,0,0,0.06);opacity:0;pointer-events:none;transform:translateY(-6px);transition:all .25s var(--eo);z-index:120}
+.bell-drop.open{opacity:1;pointer-events:all;transform:translateY(0)}
+.bell-drop .bd-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(0,0,0,0.06)}
+.bell-drop .bd-head b{font-size:13.5px}
+.bell-drop .bd-item{padding:12px 16px;display:flex;gap:10px;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;transition:background .2s}
+.bell-drop .bd-item:hover{background:var(--g50)}
+.bell-drop .bd-item.unread{background:rgba(212,168,67,0.07)}
+
+/* ===== Reports ===== */
+.report-table{width:100%;border-collapse:collapse;font-size:13px}
+.report-table th{background:var(--g50);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)}
+.report-table td{padding:9px 12px;border-bottom:1px solid rgba(0,0,0,0.04)}
+.report-table td.num{font-variant-numeric:tabular-nums;text-align:right}
+.report-table tr:hover td{background:var(--g50)}
+
+/* ===== Roles ===== */
+.roles-table{width:100%;border-collapse:collapse;font-size:13px}
+.roles-table th{background:var(--g50);padding:11px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)}
+.roles-table td{padding:11px 12px;border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:top}
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;max-height:300px;overflow-y:auto;padding:2px}
+.perm-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--tx2);background:rgba(255,255,255,0.05);border:1px solid var(--glassb);border-radius:10px;padding:8px 10px;cursor:pointer}
+.perm-item input{width:16px;height:16px;accent-color:var(--au500)}
+
+/* ===== Audit ===== */
+.audit-list{max-height:520px;overflow-y:auto}
+.audit-item{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(0,0,0,0.05);align-items:flex-start}
+.audit-item:last-child{border-bottom:none}
+.audit-item .a-time{min-width:130px;font-size:11.5px;color:var(--tx4);font-variant-numeric:tabular-nums}
+.audit-item .a-body{flex:1}
+.audit-item .a-body b{font-size:13px}
+.audit-item .a-body .a-act{font-size:11px;color:var(--g600);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.audit-item .a-body p{font-size:12px;color:var(--tx3);margin-top:2px;word-break:break-word}
+
+/* ===== Toggle ===== */
+.switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch .slider{position:absolute;inset:0;background:#d5e0da;border-radius:99px;transition:.25s;cursor:pointer}
+.switch .slider::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;top:3px;left:3px;background:#fff;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.switch input:checked + .slider{background:var(--g600)}
+.switch input:checked + .slider::before{transform:translateX(18px)}
+
+/* ===== Toast ===== */
+.toast{position:fixed;bottom:24px;right:24px;z-index:500;padding:14px 22px;border-radius:var(--rmd);font-size:13px;font-weight:600;transform:translateY(100px);opacity:0;transition:all .4s var(--eo);pointer-events:none;box-shadow:var(--sh3);max-width:340px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{background:var(--g700);color:var(--white)}
+.toast.err{background:var(--red);color:var(--white)}
+
+/* ===== Responsive ===== */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,0.4)}
+  .main{margin-left:0}
+  .burger{display:block}
+  .content{padding:20px 16px 48px}
+  .navbar{padding:12px 16px}
+  .stats{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat-card{padding:15px 13px}
+}
+@media(max-width:520px){
+  .stats{grid-template-columns:1fr 1fr}
+  .users-grid{grid-template-columns:1fr}
+  .tables-grid{grid-template-columns:1fr 1fr}
+  .bell-drop{width:300px;right:-70px}
+  .topbar-user{display:none}
+  .detail-actions button,.modal-actions button{min-height:40px;font-size:12.5px}
+}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">SH<span>V</span>ILI</div>
+    <div class="login-sub">Админ-панель ресторана</div>
+    <div class="login-msg" id="loginMsg"></div>
+    <form id="loginForm" onsubmit="return handleLogin(event)">
+      <div class="field field-dark">
+        <label>Email</label>
+        <input type="email" id="loginEmail" required autocomplete="email" placeholder="admin@shvili.com">
+      </div>
+      <div class="field field-dark">
+        <label>Пароль</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">Войти</button>
+    </form>
+    <a href="index.html" class="login-back">← Вернуться на сайт</a>
+  </div>
+</div>
+
+<!-- Admin -->
+<div class="admin" id="adminPanel">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">SH<span>V</span>ILI<span class="side-sub">Управление рестораном</span></div>
+    <nav class="nav" id="navList"></nav>
+    <div class="side-foot">
+      <div class="side-user"><b id="sideUserName"></b><span id="sideRole"></span></div>
+      <button class="logout-btn" onclick="handleLogout()">Выйти</button>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="navbar">
+      <button class="burger" onclick="toggleSidebar(true)">☰</button>
+      <h1 id="pageTitle">Дашборд</h1>
+      <div class="nav-right">
+        <div class="bell-wrap">
+          <button class="bell-btn" id="bellBtn" onclick="toggleBell()">🔔 <span id="bellCount" class="bell-count" style="display:none">0</span></button>
+          <div class="bell-drop" id="bellDrop"></div>
+        </div>
+        <span class="topbar-user" id="adminEmail"></span>
+      </div>
+    </header>
+    <div class="content" id="content">
+
+      <!-- Dashboard -->
+      <div class="section" id="sec-dashboard">
+        <div class="stats" id="dashStats"></div>
+        <div class="panel" id="dashEventsWrap" style="display:none">
+          <h3>Последние события</h3>
+          <div class="audit-list" id="dashEvents"></div>
+        </div>
+        <div class="panel" id="dashActionsWrap" style="display:none">
+          <h3>Быстрые действия</h3>
+          <div id="dashActions" style="display:flex;gap:10px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+
+      <!-- Bookings -->
+      <div class="section" id="sec-bookings">
+        <div class="stats" id="statsRow"></div>
+        <div class="filter-bar">
+          <input type="text" id="searchInput" placeholder="Поиск по имени или телефону…" oninput="applyFilters()">
+          <button class="chip active" onclick="filterByStatus('all',this)">Все</button>
+          <button class="chip" onclick="filterByStatus('pending',this)">Ожидают</button>
+          <button class="chip" onclick="filterByStatus('confirmed',this)">Подтверждённые</button>
+          <button class="chip" onclick="filterByStatus('completed',this)">Завершённые</button>
+          <button class="chip" onclick="filterByStatus('rejected',this)">Отклонённые</button>
+          <button class="chip" onclick="filterByStatus('cancelled',this)">Отменённые</button>
+          <button class="chip" onclick="filterByStatus('no_show',this)">Не пришли</button>
+        </div>
+        <div class="bookings-wrap">
+          <table class="bookings-table">
+            <thead><tr>
+              <th>Гость</th><th>Телефон</th><th>Дата</th><th>Время</th><th>Гости</th><th>Стол</th><th>Статус</th><th>Действия</th>
+            </tr></thead>
+            <tbody id="bookingsBody"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState" style="display:none"><span class="icon">📋</span><p>Бронирований пока нет</p></div>
+        </div>
+      </div>
+
+      <!-- Users -->
+      <div class="section" id="sec-users">
+        <div class="sec-head">
+          <div>
+            <h2>Пользователи</h2>
+            <div class="hint">Поиск, роли, блокировка и борьба с отзывами без переделки сайта.</div>
+          </div>
+          <button class="btn gold" id="btnInvite" onclick="openInviteModal()">+ Сотрудник</button>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="userSearch" placeholder="Поиск по имени, email, телефону…" oninput="renderUsers()">
+          <select id="userRoleFilter" onchange="renderUsers()" style="width:auto;min-height:42px;padding:9px 34px 9px 14px;border:1.5px solid #dde8e2;border-radius:12px;font-size:13px;background:#fff"></select>
+          <select id="userStatusFilter" onchange="renderUsers()" style="width:auto;min-height:42px;padding:9px 34px 9px 14px;border:1.5px solid #dde8e2;border-radius:12px;font-size:13px;background:#fff">
+            <option value="all">Все статусы</option>
+            <option value="active">Активные</option>
+            <option value="invited">Приглашённые</option>
+            <option value="blocked">Заблокированные</option>
+            <option value="deleted">Удалённые</option>
+          </select>
+        </div>
+        <div class="card" style="padding:18px"><div class="users-grid" id="usersGrid"></div></div>
+      </div>
+
+      <!-- Menu -->
+      <div class="section" id="sec-menu">
+        <div class="sec-head">
+          <div><h2>Меню ресторана</h2><div class="hint">Названия RU/EN, цена, вес, категория, фото, доступность, популярное.</div></div>
+          <button class="btn gold" id="btnAddMenu" onclick="openMenuModal()">+ Добавить блюдо</button>
+        </div>
+        <div class="me-grid" id="menuGrid"></div>
+      </div>
+
+      <!-- Tables -->
+      <div class="section" id="sec-tables">
+        <div class="sec-head">
+          <div><h2>Столы</h2><div class="hint">Свободные / зарезервированные / занятые, бронз на сегодня рядом.</div></div>
+          <button class="btn gold" id="btnAddTable" onclick="openTableModal()">+ Добавить стол</button>
+        </div>
+        <div class="tables-grid" id="tablesGrid"></div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="section" id="sec-notifications">
+        <div class="sec-head">
+          <div><h2>Уведомления</h2><div class="hint" id="notifHint"></div></div>
+          <button class="btn green" onclick="markAllRead()">Отметить все прочитанными</button>
+        </div>
+        <div class="card" style="overflow:hidden"><div id="notifList"></div></div>
+      </div>
+
+      <!-- Reports -->
+      <div class="section" id="sec-reports">
+        <div class="sec-head">
+          <div><h2>Отчёты</h2><div class="hint">Бронирования по дням и статусам.</div></div>
+          <select id="reportDays" onchange="loadReports()" style="padding:9px 34px 9px 14px;border:1.5px solid #dde8e2;border-radius:12px;font-size:13px;background:#fff;color:var(--tx1)">
+            <option value="7">7 дней</option>
+            <option value="14" selected>14 дней</option>
+            <option value="30">30 дней</option>
+          </select>
+        </div>
+        <div class="stats" id="reportSummary"></div>
+        <div class="panel"><div style="overflow-x:auto" id="reportWrap"></div></div>
+      </div>
+
+      <!-- Roles -->
+      <div class="section" id="sec-roles">
+        <div class="sec-head">
+          <div><h2>Роли и права</h2><div class="hint">Системные роли можно изменять только SUPER ADMIN.</div></div>
+          <button class="btn gold" id="btnAddRole" onclick="openRoleForm()">+ Создать роль</button>
+        </div>
+        <div class="card" style="overflow-x:auto"><table class="roles-table"><thead><tr>
+          <th>Роль</th><th>Права</th><th style="min-width:150px">Действия</th>
+        </tr></thead><tbody id="rolesBody"></tbody></table></div>
+      </div>
+
+      <!-- Audit -->
+      <div class="section" id="sec-audit">
+        <div class="sec-head"><div><h2>Журнал действий</h2><div class="hint">Кто, когда и что изменил.</div></div></div>
+        <div class="card" style="overflow:hidden"><div class="audit-list" id="auditList"></div></div>
+      </div>
+
+      <!-- Settings -->
+      <div class="section" id="sec-settings">
+        <div class="sec-head"><div><h2>Настройки ресторана</h2><div class="hint" id="settingsHint"></div></div></div>
+        <div class="card" style="padding:22px;max-width:640px">
+          <div id="settingsForm"></div>
+          <div class="modal-actions" id="settingsSaveWrap" style="display:none">
+            <button class="m-save btn wide" onclick="saveSettings()">Сохранить настройки</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Booking detail / edit modal -->
+<div class="overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="modal-card">
+    <div class="modal-close" onclick="closeDetail()">✕</div>
+    <h3 id="detailTitle">Детали бронирования</h3>
+    <div id="detailContent"></div>
+    <div class="detail-actions" id="detailActions"></div>
+  </div>
+</div>
+
+<!-- User detail modal -->
+<div class="overlay" id="userDetailOverlay" onclick="if(event.target===this)closeUserDetail()">
+  <div class="modal-card wide">
+    <div class="modal-close" onclick="closeUserDetail()">✕</div>
+    <h3 id="userDetailTitle">Профиль пользователя</h3>
+    <div id="userDetailContent"></div>
+  </div>
+</div>
+
+<!-- Invite staff modal -->
+<div class="overlay" id="inviteOverlay" onclick="if(event.target===this)closeInviteModal()">
+  <div class="modal-card">
+    <div class="modal-close" onclick="closeInviteModal()">✕</div>
+    <h3 id="inviteTitle">Пригласить сотрудника</h3>
+    <div class="field field-dark"><label>Email</label><input type="email" id="invEmail" placeholder="waiter@shvili.com"></div>
+    <div class="field field-dark"><label>Имя</label><input type="text" id="invName" placeholder="Имя сотрудника"></div>
+    <div class="arow">
+      <div class="field field-dark"><label>Телефон</label><input type="text" id="invPhone" placeholder="+992…"></div>
+      <div class="field field-dark"><label>Роль</label><select id="invRole"></select></div>
+    </div>
+    <div class="detail-note">Сотрудник сам зарегистрируется на сайте с этим email — аккаунт активируется автоматически с назначенной ролью.</div>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="closeInviteModal()">Отмена</button>
+      <button class="m-save" onclick="saveInvite()">Пригласить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assign role modal (change user role) -->
+<div class="overlay" id="setRoleOverlay" onclick="if(event.target===this)closeSetRole()">
+  <div class="modal-card">
+    <div class="modal-close" onclick="closeSetRole()">✕</div>
+    <h3>Изменить роль пользователя</h3>
+    <div class="field field-dark"><label>Роль</label><select id="setRoleSelect"></select></div>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="closeSetRole()">Отмена</button>
+      <button class="m-save" onclick="saveUserRole()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Table modal -->
+<div class="overlay" id="tableOverlay" onclick="if(event.target===this)closeTableModal()">
+  <div class="modal-card">
+    <div class="modal-close" onclick="closeTableModal()">✕</div>
+    <h3 id="tableModalTitle">Добавить стол</h3>
+    <div class="arow">
+      <div class="field field-dark"><label>Номер / название</label><input type="text" id="tbNumber" placeholder="напр. 5"></div>
+      <div class="field field-dark"><label>Мест</label><input type="number" id="tbSeats" min="1" value="4"></div>
+    </div>
+    <div class="field field-dark"><label>Зона</label><input type="text" id="tbZone" placeholder="напр. Зал у камина"></div>
+    <div class="field field-dark"><label>Статус</label><select id="tbStatus">
+      <option value="free">Свободен</option>
+      <option value="reserved">Зарезервирован</option>
+      <option value="occupied">Занят</option>
+    </select></div>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="closeTableModal()">Отмена</button>
+      <button class="m-save" onclick="saveTable()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Menu item modal -->
+<div class="overlay" id="menuModal" onclick="if(event.target===this)closeMenuModal()">
+  <div class="modal-card">
+    <div class="modal-close" onclick="closeMenuModal()">✕</div>
+    <h3 id="menuModalTitle">Добавить блюдо</h3>
+    <div class="field field-dark"><label>Категория</label><select id="meCategory"></select></div>
+    <div class="arow">
+      <div class="field field-dark"><label>Название (RU)</label><input type="text" id="meNameRu" placeholder="Хинкали"></div>
+      <div class="field field-dark"><label>Название (EN)</label><input type="text" id="meNameEn" placeholder="Khinkali"></div>
+    </div>
+    <div class="arow">
+      <div class="field field-dark"><label>Описание (RU)</label><textarea id="meDescRu" rows="2" placeholder="Сочные грузинские пельмени…"></textarea></div>
+      <div class="field field-dark"><label>Описание (EN)</label><textarea id="meDescEn" rows="2" placeholder="Juicy Georgian dumplings…"></textarea></div>
+    </div>
+    <div class="arow">
+      <div class="field field-dark"><label>Цена (TJS)</label><input type="number" id="mePrice" min="0" step="1" placeholder="59"></div>
+      <div class="field field-dark"><label>Вес</label><input type="text" id="meWeight" placeholder="240г"></div>
+    </div>
+    <div class="field field-dark"><label>URL изображения</label><input type="url" id="meImage" placeholder="https://..."></div>
+    <div class="arow">
+      <div class="field field-dark"><label>Эмодзи-иконка</label><input type="text" id="meIcon" placeholder="🥟" maxlength="4"></div>
+      <div class="field field-dark"><label>Порядок сортировки</label><input type="number" id="meSort" min="0" value="0"></div>
+    </div>
+    <div class="arow" style="margin-top:10px">
+      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.7)"><span>Доступно в меню</span>
+        <span class="switch"><input type="checkbox" id="meAvailable" checked><span class="slider"></span></span></label>
+      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.7)"><span>Популярное</span>
+        <span class="switch"><input type="checkbox" id="mePopular"><span class="slider"></span></span></label>
+    </div>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="closeMenuModal()">Отмена</button>
+      <button class="m-save" onclick="saveMenuItem()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Role form modal -->
+<div class="overlay" id="roleOverlay" onclick="if(event.target===this)closeRoleForm()">
+  <div class="modal-card wide">
+    <div class="modal-close" onclick="closeRoleForm()">✕</div>
+    <h3 id="roleModalTitle">Создать роль</h3>
+    <div class="arow">
+      <div class="field field-dark"><label>Ключ (лат., без пробелов)</label><input type="text" id="roleKey" placeholder="host"></div>
+      <div class="field field-dark"><label>Название</label><input type="text" id="roleDisplay" placeholder="HOST"></div>
+    </div>
+    <label style="font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);display:block;margin-bottom:8px">Права</label>
+    <div class="perm-grid" id="rolePermsGrid"></div>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="closeRoleForm()">Отмена</button>
+      <button class="m-save" onclick="saveRole()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div class="overlay" id="confirmOverlay" onclick="if(event.target===this)confirmResolve(false)">
+  <div class="modal-card" style="max-width:400px;text-align:center">
+    <div style="font-size:40px;margin-bottom:8px">⚠️</div>
+    <h3 id="confirmTitle" style="margin-bottom:8px">Подтверждение</h3>
+    <p id="confirmText" style="color:rgba(255,255,255,0.6);font-size:14px;max-width:320px;margin:0 auto"></p>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="m-cancel" onclick="confirmResolve(false)">Отмена</button>
+      <button class="m-save" style="background:var(--red);color:#fff" onclick="confirmResolve(true)">Да, продолжить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+const SUPABASE_URL = "https://konqistuionjvoiwgmhw.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_tJAJ9BenNQngjc8Fb_vMnw_5rbVtsex";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// EmailJS — уведомления клиенту при смене статуса брони.
+// Создайте шаблоны в https://dashboard.emailjs.com → Email Templates и вставьте ID ниже.
+const EMAILJS_PUBLIC_KEY = 'Twva3cC03i42gyS0d';
+const EMAILJS_SERVICE = 'service_k4leds9';
+const EMAILJS_TEMPLATE_CLIENT_CONFIRMED = 'template_2olcduy';
+const EMAILJS_TEMPLATE_CLIENT_REJECTED = 'template_XXXX_REJECTED';
+const EMAILJS_TEMPLATE_CLIENT_CHANGED = 'template_XXXX_CHANGED';
+try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch (e) { console.error('emailjs init:', e); }
+
+/* ===== Состояние и права ===== */
+let ctx = null;            // контекст с сервера (my_context)
+let allBookings = [];
+let currentStatusFilter = 'all';
+let menuItems = [];
+let menuCats = [];
+let allUsers = [];
+let allTables = [];
+let allRoles = [];
+let allPerms = [];
+let allRolePerms = [];
+let allNotifs = [];
+let notifChannel = null, bookingChannel = null, notifChannelReady = false, bookingChannelReady = false;
+let currentSection = 'dashboard';
+let editingMenuId = null, editingTableId = null, editingUser = null, editingRole = null;
+
+const ROLE_LABELS = {
+  super_admin:'SUPER ADMIN', admin:'ADMIN', manager:'MANAGER',
+  chef:'CHEF', staff:'STAFF', client:'CLIENT'
+};
+const ACTION_LABELS = {
+  'booking.created':'Создана бронь','booking.status':'Изменён статус брони','booking.updated':'Бронь отредактирована',
+  'user.registered':'Регистрация пользователя','user.role':'Смена роли','user.blocked':'Блокировка','user.unblocked':'Разблокировка',
+  'user.deleted':'Удаление пользователя','user.invited':'Приглашение сотрудника',
+  'menu.created':'Добавлено блюдо','menu.updated':'Обновлено блюдо','menu.deleted':'Удалено блюдо',
+  'table.created':'Добавлен стол','table.updated':'Обновлён стол','table.deleted':'Удалён стол',
+  'role.created':'Создана роль','role.updated':'Роль обновлена','role.deleted':'Роль удалена',
+  'role_sync':'Обновлён состав прав','settings.set':'Изменены настройки'
+};
+const SECTION_REG = {
+  dashboard:{label:'Дашборд',icon:'📊',perm:'dashboard.view'},
+  bookings:{label:'Бронирования',icon:'🍽️',perm:'bookings.view'},
+  users:{label:'Пользователи',icon:'👥',perm:'users.view'},
+  menu:{label:'Меню',icon:'🍜',perm:'menu.view'},
+  tables:{label:'Столы',icon:'🪑',perm:'tables.view'},
+  notifications:{label:'Уведомления',icon:'🔔',perm:'notifications.view'},
+  reports:{label:'Отчёты',icon:'📈',perm:'reports.view'},
+  roles:{label:'Роли и права',icon:'🔐',perm:'roles.view'},
+  audit:{label:'Журнал',icon:'📜',perm:'audit.view'},
+  settings:{label:'Настройки',icon:'⚙️',perm:'settings.view'}
+};
+const CAT_STATIC = [
+  ['cold','Холодные закуски'],['khinkali','Хинкали'],['hotapp','Горячие закуски'],['khachapuri','Хачапури'],
+  ['salad','Салаты'],['soup','Супы'],['main','Горячие блюда'],['shashlik','Шашлык'],['side','Гарниры'],
+  ['sauce','Соусы'],['dessert','Десерты'],['drink','Напитки'],['jam','Варенье']
+];
+
+function can(p) { return !!(ctx && Array.isArray(ctx.permissions) && ctx.permissions.includes(p)); }
+function isSA() { return ctx && ctx.role === 'super_admin'; }
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + (type || 'ok');
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = (s == null ? '' : String(s)); return d.innerHTML; }
+function initials(name, email) {
+  const src = (name || email || '?').trim();
+  return src ? src.slice(0, 1).toUpperCase() : '?';
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(String(d).slice(0,10) + 'T00:00:00');
+  if (isNaN(dt)) return escapeHtml(d);
+  return dt.toLocaleDateString('ru-RU', { day:'numeric', month:'short', year:'numeric' });
+}
+function fmtDT(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt)) return escapeHtml(d);
+  return dt.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+}
+
+/* ===== Confirm dialog ===== */
+let confirmResolveFn = null;
+function confirmAsk(text) {
+  return new Promise(res => {
+    const o = document.getElementById('confirmOverlay');
+    document.getElementById('confirmText').textContent = text;
+    confirmResolveFn = res;
+    o.classList.add('open');
+  });
+}
+function confirmResolve(answer) {
+  const o = document.getElementById('confirmOverlay');
+  o.classList.remove('open');
+  if (confirmResolveFn) { confirmResolveFn(answer); confirmResolveFn = null; }
+}
+
+/* ===== Auth ===== */
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const msg = document.getElementById('loginMsg');
+  btn.disabled = true; btn.textContent = 'Вход…'; msg.className = 'login-msg';
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    const ok = await enterPanel();
+    if (!ok) return;
+  } catch (err) {
+    msg.textContent = err.message || 'Ошибка входа';
+    msg.className = 'login-msg err';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Войти';
+  }
+  return false;
+}
+
+// Серверная проверка: роль, статус, права берём из БД (my_context), а не из JWT.
+async function enterPanel() {
+  const { data, error } = await sb.rpc('my_context');
+  if (error) {
+    showToast('Ошибка проверки прав: ' + error.message, 'err');
+    return false;
+  }
+  if (!data) { showToast('Профиль не найден', 'err'); return false; }
+  if (data.status !== 'active') {
+    await sb.auth.signOut();
+    document.getElementById('loginMsg').textContent = 'Ваш аккаунт заблокирован. Обратитесь к администратору.';
+    document.getElementById('loginMsg').className = 'login-msg err';
+    return false;
+  }
+  if (!data.is_staff) {
+    await sb.auth.signOut();
+    document.getElementById('loginMsg').textContent = 'Доступ запрещён. Панель — только для персонала.';
+    document.getElementById('loginMsg').className = 'login-msg err';
+    return false;
+  }
+  ctx = data;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminPanel').classList.add('visible');
+  document.getElementById('adminEmail').textContent = ctx.email;
+  document.getElementById('sideUserName').textContent = ctx.name || ctx.email;
+  document.getElementById('sideRole').textContent = ROLE_LABELS[ctx.role] || ctx.role;
+  buildNav();
+  hideUnauthorized();
+  setupRealtime();
+  await Promise.all([loadDashboard(), loadBookings(), loadNotifications()]);
+  go('dashboard');
+  return true;
+}
+
+async function handleLogout() {
+  if (bookingChannel) { try { await sb.removeChannel(bookingChannel); } catch (e) {} bookingChannel = null; bookingChannelReady = false; }
+  if (notifChannel) { try { await sb.removeChannel(notifChannel); } catch (e) {} notifChannel = null; notifChannelReady = false; }
+  await sb.auth.signOut();
+  ctx = null;
+  document.getElementById('adminPanel').classList.remove('visible');
+  document.getElementById('loginScreen').style.display = '';
+}
+
+/* ===== Навигация ===== */
+function buildNav() {
+  const nav = document.getElementById('navList');
+  let html = '';
+  Object.keys(SECTION_REG).forEach(key => {
+    const s = SECTION_REG[key];
+    if (!can(s.perm)) return;
+    html += `<button class="nav-item" data-sec="${key}" onclick="go('${key}')"><span class="n-ico">${s.icon}</span>${s.label}</button>`;
+  });
+  nav.innerHTML = html;
+  if (!can('roles.view')) document.getElementById('btnAddRole')?.remove();
+  if (!can('menu.create')) document.getElementById('btnAddMenu')?.remove();
+  if (!can('tables.create')) document.getElementById('btnAddTable')?.remove();
+  if (!can('users.create')) document.getElementById('btnInvite')?.remove();
+}
+
+function hideUnauthorized() {
+  const pageTitle = document.getElementById('pageTitle');
+  if (pageTitle.dataset.done) return;
+  pageTitle.dataset.done = '1';
+}
+
+function go(sec) {
+  if (!ctx || !SECTION_REG[sec] || !can(SECTION_REG[sec].perm)) { showToast('Нет доступа к разделу', 'err'); return; }
+  currentSection = sec;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.sec === sec));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + sec).classList.add('active');
+  document.getElementById('pageTitle').textContent = SECTION_REG[sec].label;
+  if (window.innerWidth <= 900) toggleSidebar(false);
+  // Ленивая загрузка данных раздела
+  if (sec === 'users' && !allUsers.length) loadUsers();
+  if (sec === 'menu' && !menuItems.length) loadMenuItems();
+  if (sec === 'tables' && !allTables.length) loadTables();
+  if (sec === 'reports') loadReports();
+  if (sec === 'roles' && !allRoles.length) loadRoles();
+  if (sec === 'audit') loadAudit();
+  if (sec === 'settings') loadSettings();
+  if (sec === 'notifications') renderNotifSection();
+}
+function toggleSidebar(open) {
+  const sbEl = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  sbEl.classList.toggle('open', open);
+  ov.classList.toggle('show', open);
+}
+
+/* ===== Realtime ===== */
+function setupRealtime() {
+  if (!ctx) return;
+  if (!bookingChannel && !bookingChannelReady) {
+    bookingChannelReady = true;
+    bookingChannel = sb.channel('admin-bookings')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => { loadBookings(); })
+      .subscribe();
+  }
+  if (!notifChannel && !notifChannelReady) {
+    notifChannelReady = true;
+    notifChannel = sb.channel('admin-notifications')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, () => { loadNotifications(); })
+      .subscribe();
+  }
+}
+
+/* ===== Dashboard ===== */
+async function loadDashboard() {
+  try {
+    const { data, error } = await sb.rpc('dashboard_stats');
+    if (error) throw error;
+    const d = data || {};
+    document.getElementById('dashStats').innerHTML = `
+      <div class="stat-card"><div class="label">Броней сегодня</div><div class="value">${d.todayTotal||0}</div><div class="sub">из них подтверждено: ${d.todayConfirmed||0}</div></div>
+      <div class="stat-card gold"><div class="label">Ожидают подтверждения</div><div class="value yellow">${d.pending||0}</div></div>
+      <div class="stat-card red"><div class="label">Отмены / не пришли (сегодня)</div><div class="value red">${d.todayClosed||0}</div></div>
+      <div class="stat-card"><div class="label">Гостей сегодня</div><div class="value">${d.todayGuests||0}</div></div>
+      <div class="stat-card"><div class="label">Пользователей</div><div class="value">${d.users||0}</div><div class="sub">персонал: ${d.staff||0}</div></div>
+      <div class="stat-card red"><div class="label">Заблокировано</div><div class="value red">${d.blocked||0}</div></div>
+      <div class="stat-card"><div class="label">Блюд в меню</div><div class="value">${d.totMenu||0}</div></div>
+      <div class="stat-card"><div class="label">Столов</div><div class="value">${d.totTables||0}</div><div class="sub">броней со столом сегодня: ${d.tableReservations||0}</div></div>`;
+  } catch (err) { console.error(err); }
+  if (can('audit.view')) {
+    document.getElementById('dashEventsWrap').style.display = '';
+    try {
+      const { data } = await sb.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(12);
+      renderEvents(data || [], 'dashEvents');
+    } catch (e) { console.error(e); }
+  }
+  loadDashActions();
+}
+function loadDashActions() {
+  const wrap = document.getElementById('dashActionsWrap');
+  const box = document.getElementById('dashActions');
+  let btns = '';
+  if (can('bookings.view')) btns += `<button class="btn green" onclick="go('bookings')">🍽️ Открыть брони</button>`;
+  if (can('users.create')) btns += `<button class="btn green" onclick="go('users')">+ Сотрудник</button>`;
+  if (can('menu.create')) btns += `<button class="btn gold" onclick="go('menu')">+ Добавить блюдо</button>`;
+  if (can('tables.create')) btns += `<button class="btn gold" onclick="go('tables')">+ Добавить стол</button>`;
+  if (can('reports.view')) btns += `<button class="btn ghost" onclick="go('reports')">📈 Отчёт</button>`;
+  if (can('settings.edit')) btns += `<button class="btn ghost" onclick="go('settings')">⚙️ Настройки</button>`;
+  if (btns) { wrap.style.display = ''; box.innerHTML = btns; }
+}
+function renderEvents(rows, elId) {
+  const el = document.getElementById(elId);
+  if (!rows.length) { el.innerHTML = '<div class="empty-state"><p>Журнал пуст</p></div>'; return; }
+  el.innerHTML = rows.map(r => `
+    <div class="audit-item">
+      <div class="a-time">${fmtDT(r.created_at)}</div>
+      <div class="a-body">
+        <b>${escapeHtml(r.actor_email || 'система')}</b>
+        <div class="a-act">${escapeHtml(ACTION_LABELS[r.action] || r.action)}</div>
+        <p>${escapeHtml(r.new_value ? JSON.stringify(r.new_value).slice(0,80) : '')}</p>
+      </div>
+    </div>`).join('');
+}
+
+/* ===== Bookings ===== */
+const STATUS_META = {
+  pending:{label:'Ожидает',css:'pending'}, confirmed:{label:'Подтверждена',css:'confirmed'},
+  rejected:{label:'Отклонена',css:'rejected'}, cancelled:{label:'Отменена',css:'cancelled'},
+  completed:{label:'Завершена',css:'completed'}, no_show:{label:'Не пришёл',css:'no_show'}
+};
+async function loadBookings() {
+  try {
+    const { data, error } = await sb.from('bookings')
+      .select('*').order('date', { ascending: false }).order('time', { ascending: false });
+    if (error) throw error;
+    allBookings = data || [];
+    renderStats(); applyFilters();
+  } catch (err) { console.error(err); if (currentSection === 'bookings') showToast('Ошибка загрузки броней: ' + err.message, 'err'); }
+}
+function renderStats() {
+  const total = allBookings.length;
+  const pending = allBookings.filter(b => b.status === 'pending').length;
+  const confirmed = allBookings.filter(b => b.status === 'confirmed').length;
+  const closed = allBookings.filter(b => ['rejected','cancelled'].includes(b.status)).length;
+  const completed = allBookings.filter(b => b.status === 'completed').length;
+  const noShow = allBookings.filter(b => b.status === 'no_show').length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="label">Всего броней</div><div class="value">${total}</div></div>
+    <div class="stat-card gold"><div class="label">Ожидают</div><div class="value yellow">${pending}</div></div>
+    <div class="stat-card"><div class="label">Подтверждены</div><div class="value green">${confirmed}</div></div>
+    <div class="stat-card red"><div class="label">Отклонены/отмены</div><div class="value red">${closed}</div></div>
+    <div class="stat-card"><div class="label">Завершены</div><div class="value green">${completed}</div></div>
+    <div class="stat-card"><div class="label">Не пришли</div><div class="value">${noShow}</div></div>`;
+}
+function filterByStatus(status, btn) {
+  currentStatusFilter = status;
+  document.querySelectorAll('.filter-bar .chip').forEach(c => c.classList.toggle('active', c === btn));
+  applyFilters();
+}
+function applyFilters() {
+  const search = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+  let filtered = allBookings;
+  if (currentStatusFilter !== 'all') filtered = filtered.filter(b => b.status === currentStatusFilter);
+  if (search) filtered = filtered.filter(b =>
+    (b.name || '').toLowerCase().includes(search) || (b.phone || '').toLowerCase().includes(search) ||
+    (b.comment || '').toLowerCase().includes(search) || (b.email || '').toLowerCase().includes(search));
+  renderBookings(filtered);
+}
+function renderBookings(items) {
+  const tbody = document.getElementById('bookingsBody');
+  const empty = document.getElementById('emptyState');
+  if (!items.length) { tbody.innerHTML = ''; empty.style.display = ''; return; }
+  empty.style.display = 'none';
+  tbody.innerHTML = items.map(b => {
+    const meta = STATUS_META[b.status] || STATUS_META.pending;
+    return `<tr onclick="openDetail('${b.id}')" style="cursor:pointer">
+      <td><div class="guest-name">${escapeHtml(b.name)}</div><div class="guest-phone">${escapeHtml(b.email||'')}</div></td>
+      <td><div class="guest-phone">${escapeHtml(b.phone)}</div></td>
+      <td class="date-cell">${fmtDate(b.date)}</td>
+      <td>${escapeHtml((b.time||'').slice(0,5))}</td>
+      <td class="guests-cell">${b.guests}</td>
+      <td>${b.table_number ? '<span class="editban">стол ' + escapeHtml(b.table_number) + '</span>' : '—'}</td>
+      <td><span class="status-badge ${meta.css}">${meta.label}</span></td>
+      <td><div class="actions" onclick="event.stopPropagation()">${getActionsHtml(b)}</div></td>
+    </tr>`;
+  }).join('');
+}
+function getActionsHtml(b) {
+  const s = b.status;
+  let btns = '';
+  const canConfirm = can('bookings.confirm');
+  const canEdit = can('bookings.edit');
+  if (s === 'pending') {
+    if (canConfirm) btns += `<button class="btn-confirm" onclick="adminSetStatus('${b.id}','confirmed')">✓ Подтвердить</button>`;
+    if (canConfirm) btns += `<button class="btn-cancel" onclick="adminSetStatus('${b.id}','rejected')">✕ Отклонить</button>`;
+    if (canEdit) btns += `<button class="btn-edit" onclick="openEditBooking('${b.id}')">✎ Изменить</button>`;
+  } else if (s === 'confirmed') {
+    if (canConfirm) btns += `<button class="btn-confirm" onclick="adminSetStatus('${b.id}','completed')">✓ Завершить</button>`;
+    if (canConfirm) btns += `<button class="btn-cancel" onclick="adminSetStatus('${b.id}','no_show')">Не пришёл</button>`;
+    if (canEdit) btns += `<button class="btn-muted" onclick="adminSetStatus('${b.id}','cancelled')">Отменить</button>`;
+    if (canEdit) btns += `<button class="btn-edit" onclick="openEditBooking('${b.id}')">✎ Изменить</button>`;
+  } else if (s === 'rejected') {
+    if (canConfirm) btns += `<button class="btn-confirm" onclick="adminSetStatus('${b.id}','pending')">Вернуть в ожидание</button>`;
+    if (canEdit) btns += `<button class="btn-edit" onclick="openEditBooking('${b.id}')">✎ Изменить</button>`;
+  }
+  return btns || '<span style="font-size:11px;color:var(--tx4)">—</span>';
+}
+async function adminSetStatus(id, status) {
+  let reason = '';
+  if (status === 'rejected') {
+    const r = prompt('Причина отклонения (отправится клиенту):', '');
+    if (r === null) return;
+    reason = r;
+  }
+  try {
+    const { data, error } = await sb.rpc('admin_set_booking_status', { p_booking_id: id, p_status: status, p_reason: reason });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error || 'Ошибка сервера');
+    await loadBookings();
+    if (status === 'rejected') {
+      const b = allBookings.find(x => x.id === id);
+      if (b) b.reject_reason = reason;
+    }
+    if (document.getElementById('detailOverlay').classList.contains('open') &&
+        document.getElementById('detailTitle').textContent.includes('Бронь')) openDetail(id);
+    const labels = { confirmed:'Бронь подтверждена', rejected:'Бронь отклонена', cancelled:'Бронь отменена', completed:'Бронь завершена', no_show:'Гость не пришёл', pending:'Бронь возвращена в ожидание' };
+    showToast(labels[status] || 'Статус обновлён', 'ok');
+    const b = allBookings.find(x => x.id === id);
+    notifyClientBooking(b, status);
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function adminUpdateBooking(id) {
+  const b = allBookings.find(x => x.id === id); if (!b) return;
+  const date = document.getElementById('editBookDate').value;
+  const time = document.getElementById('editBookTime').value;
+  const guests = parseInt(document.getElementById('editBookGuests').value, 10);
+  const table = document.getElementById('editBookTable').value.trim();
+  const comment = document.getElementById('editBookComment').value.trim();
+  if (!date || !time || !guests) { showToast('Заполните дату, время и кол-во гостей', 'err'); return; }
+  try {
+    const { data, error } = await sb.rpc('admin_update_booking', {
+      p_booking_id: id, p_date: date, p_time: time, p_guests: guests,
+      p_table_number: table, p_comment: comment
+    });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error || 'Ошибка сервера');
+    showToast('Бронь изменена и возвращена в ожидание', 'ok');
+    await loadBookings();
+    if (document.getElementById('detailOverlay').classList.contains('open')) openDetail(id);
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+function openDetail(id) {
+  const b = allBookings.find(x => x.id === id); if (!b) return;
+  document.getElementById('detailTitle').textContent = `Бронь — ${escapeHtml(b.name)}`;
+  document.getElementById('detailContent').innerHTML = getDetailRows(b);
+  document.getElementById('detailActions').innerHTML = getActionsHtml(b) || '<div style="width:100%;text-align:center;color:rgba(255,255,255,0.3);font-size:12px">Действия недоступны</div>';
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function getDetailRows(b) {
+  const d = new Date(String(b.date).slice(0,10) + 'T00:00:00');
+  const dateFmt = isNaN(d) ? escapeHtml(b.date) : d.toLocaleDateString('ru-RU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const meta = STATUS_META[b.status] || STATUS_META.pending;
+  let rows = `
+    <div class="detail-row"><div><div class="detail-label">Имя</div><div class="detail-value">${escapeHtml(b.name)}</div></div></div>
+    <div class="detail-row"><div><div class="detail-label">Телефон</div><div class="detail-value">${escapeHtml(b.phone)}</div></div></div>
+    ${b.email ? `<div class="detail-row"><div><div class="detail-label">Email</div><div class="detail-value">${escapeHtml(b.email)}</div></div></div>` : ''}
+    <div class="detail-row"><div><div class="detail-label">Дата</div><div class="detail-value">${dateFmt}</div></div></div>
+    <div class="detail-row"><div><div class="detail-label">Время</div><div class="detail-value">${escapeHtml((b.time||'').slice(0,5))}${b.table_number ? ' <span class="editban">стол ' + escapeHtml(b.table_number) + '</span>' : ''}</div></div></div>
+    <div class="detail-row"><div><div class="detail-label">Кол-во гостей</div><div class="detail-value">${b.guests}</div></div></div>
+    <div class="detail-row"><div><div class="detail-label">Статус</div><div class="detail-value"><span class="status-badge ${meta.css}">${meta.label}</span></div></div></div>`;
+  if (b.reject_reason) rows += `<div class="detail-row"><div><div class="detail-label">Причина отклонения</div><div class="detail-value" style="color:var(--red)">${escapeHtml(b.reject_reason)}</div></div></div>`;
+  if (b.admin_note) rows += `<div class="detail-row"><div><div class="detail-label">Примечание</div><div class="detail-value" style="color:var(--au300)">${escapeHtml(b.admin_note)}</div></div></div>`;
+  if (b.comment) rows += `<div class="detail-row"><div><div class="detail-label">Комментарий</div><div class="detail-value">${escapeHtml(b.comment)}</div></div></div>`;
+  rows += `<div class="detail-row"><div><div class="detail-label">ID записи</div><div class="detail-value" style="font-size:11px;color:rgba(255,255,255,0.35)">${escapeHtml(b.id)}</div></div></div>`;
+  return rows;
+}
+function openEditBooking(id) {
+  const b = allBookings.find(x => x.id === id); if (!b) return;
+  const tableOpts = allTables.map(t => `<option value="${escapeHtml(t.number)}">${escapeHtml(t.number)} (${t.seats})</option>`).join('');
+  document.getElementById('detailTitle').textContent = `Изменить бронь — ${escapeHtml(b.name)}`;
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-note">После сохранения бронь вернётся в статус «Ожидает» — подтвердите её повторно.</div>
+    <div class="arow" style="display:grid;grid-template-columns:1fr 1fr;gap:12px" >
+      <div class="field field-dark"><label>Дата</label><input type="date" id="editBookDate" value="${escapeHtml(b.date)}"></div>
+      <div class="field field-dark"><label>Время</label><input type="time" id="editBookTime" value="${escapeHtml((b.time||'').slice(0,5))}"></div>
+    </div>
+    <div class="arow" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field field-dark"><label>Гости</label><input type="number" id="editBookGuests" min="1" max="50" value="${b.guests}"></div>
+      <div class="field field-dark"><label>Стол</label>
+        <input type="text" id="editBookTable" list="editTableList" placeholder="напр. 4" value="${escapeHtml(b.table_number||'')}">
+        <datalist id="editTableList">${tableOpts}</datalist>
+      </div>
+    </div>
+    <div class="field field-dark"><label>Комментарий</label><textarea id="editBookComment" rows="2">${escapeHtml(b.comment||'')}</textarea></div>`;
+  document.getElementById('detailActions').innerHTML = `
+    <button class="m-cancel" onclick="openDetail('${b.id}')">Назад</button>
+    <button class="m-save" onclick="adminUpdateBooking('${b.id}')">Сохранить</button>`;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+}
+function notifyClientBooking(b, status) {
+  if (!b || !b.email) return;
+  try {
+    const params = {
+      name: b.name, email: b.email, phone: b.phone,
+      date: (b.date || '').slice(0,10), time: (b.time || '').slice(0,5),
+      guests: b.guests, reason: b.reject_reason || '', table_number: b.table_number || ''
+    };
+    const tpl = status === 'confirmed' ? EMAILJS_TEMPLATE_CLIENT_CONFIRMED
+               : status === 'rejected' ? EMAILJS_TEMPLATE_CLIENT_REJECTED
+               : EMAILJS_TEMPLATE_CLIENT_CHANGED;
+    if (tpl && tpl.startsWith('template_') && !tpl.includes('XXXX')) {
+      emailjs.send(EMAILJS_SERVICE, tpl, params).catch(e => console.error('EmailJS:', e));
+    }
+  } catch (e) { console.error(e); }
+}
+
+/* ===== Users ===== */
+async function loadUsers() {
+  try {
+    const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    allUsers = (data || []).filter(u => u.status !== 'invited');
+    const invited = (data || []).filter(u => u.status === 'invited');
+    if (invited.length) {
+      const looked = await sb.from('profiles').select('id,email,role,status').in('id', invited.map(i => i.id));
+      if (!looked.error && looked.data) allUsers = allUsers.concat(looked.data.filter(l => l.status === 'invited'));
+    }
+    fillRoleFilters();
+    renderUsers();
+  } catch (err) { showToast('Ошибка загрузки пользователей: ' + err.message, 'err'); }
+}
+function fillRoleFilters() {
+  const sel = document.getElementById('userRoleFilter');
+  const opt = [{ key:'all', display:'Все роли' }].concat(allRoles.length ? allRoles : Object.keys(ROLE_LABELS).map(k => ({ key:k, display:ROLE_LABELS[k] })));
+  sel.innerHTML = opt.map(r => `<option value="${escapeHtml(r.key)}">${escapeHtml(r.display)}</option>`).join('');
+  const selR = document.getElementById('invRole');
+  selR.innerHTML = opt.filter(r => r.key !== 'all').map(r => `<option value="${escapeHtml(r.key)}">${escapeHtml(r.display)}</option>`).join('');
+  const selS = document.getElementById('setRoleSelect');
+  selS.innerHTML = opt.filter(r => r.key !== 'all').map(r => `<option value="${escapeHtml(r.key)}">${escapeHtml(r.display)}</option>`).join('');
+}
+function renderUsers() {
+  const search = (document.getElementById('userSearch').value || '').toLowerCase().trim();
+  const roleF = document.getElementById('userRoleFilter').value;
+  const statusF = document.getElementById('userStatusFilter').value;
+  let list = allUsers;
+  if (roleF !== 'all') list = list.filter(u => u.role === roleF);
+  if (statusF !== 'all') list = list.filter(u => u.status === statusF);
+  if (search) list = list.filter(u =>
+    (u.first_name || '').toLowerCase().includes(search) || (u.email || '').toLowerCase().includes(search) ||
+    (u.phone || '').toLowerCase().includes(search));
+  const grid = document.getElementById('usersGrid');
+  if (!list.length) { grid.innerHTML = '<div class="empty-state"><span class="icon">👥</span><p>Никого не найдено</p></div>'; return; }
+  const canBlock = can('users.block'), canRole = can('users.edit'), canDel = can('users.delete');
+  grid.innerHTML = list.map(u => {
+    const isMe = ctx.id === u.id;
+    const isSA = u.role === 'super_admin';
+    const iAmSA = ctx.role === 'super_admin';
+    const canAct = !isMe && !(isSA && !iAmSA);
+    return `<div class="user-card card">
+      <div class="user-top">
+        <div class="avatar">${escapeHtml(initials(u.first_name, u.email))}</div>
+        <div style="min-width:0">
+          <div class="user-name">${escapeHtml(u.first_name || 'Без имени')}${isMe ? ' <span style="color:var(--tx4);font-size:11px">(вы)</span>' : ''}</div>
+          <div class="user-mail">${escapeHtml(u.email)}</div>
+        </div>
+      </div>
+      <div class="user-meta">
+        <span class="role-chip" style="background:${u.role==='super_admin'?'var(--au200)':''};color:${u.role==='super_admin'?'var(--au600)':''}">${escapeHtml(ROLE_LABELS[u.role] || u.role)}</span>
+        <span class="status-badge ${u.status}">${u.status === 'active' ? 'Активен' : u.status === 'blocked' ? 'Заблокирован' : u.status === 'invited' ? 'Приглашён' : 'Удалён'}</span>
+      </div>
+      <div class="user-actions">
+        <button class="btn ghost small" onclick="openUserDetail('${u.id}')">Открыть</button>
+        ${canRole && canAct ? `<button class="btn ghost small" onclick="openSetRole('${u.id}')">Роль: ${escapeHtml(ROLE_LABELS[u.role]||u.role)}</button>` : ''}
+        ${canBlock && canAct ? (u.status === 'blocked'
+          ? `<button class="btn green small" onclick="blockUser('${u.id}',false)">Разблокировать</button>`
+          : `<button class="btn danger small" onclick="blockUser('${u.id}',true)">Заблокировать</button>`) : ''}
+        ${canDel && canAct && u.status !== 'deleted' ? `<button class="btn danger small" onclick="deleteUser('${u.id}')">Удалить</button>` : ''}
+      </div>
+      <div class="user-foot"><span>${u.phone || '—'}</span><span>заходил: ${fmtDT(u.last_login)}</span></div>
+    </div>`;
+  }).join('');
+}
+async function openUserDetail(id) {
+  editingUser = allUsers.find(u => u.id === id);
+  if (!editingUser) return;
+  const u = editingUser;
+  document.getElementById('userDetailTitle').textContent = (u.first_name || 'Пользователь') + ' — карточка';
+  const hist = allBookings.filter(b => b.user_id === id);
+  document.getElementById('userDetailContent').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div class="avatar" style="width:56px;height:56px;font-size:21px">${escapeHtml(initials(u.first_name, u.email))}</div>
+      <div>
+        <div style="font-size:17px;font-weight:700;color:#fff">${escapeHtml(u.first_name || 'Без имени')}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5)">${escapeHtml(u.email)}</div>
+        <div style="margin-top:6px"><span class="role-chip">${escapeHtml(ROLE_LABELS[u.role]||u.role)}</span> <span class="status-badge ${u.status}">${u.status}</span></div>
+      </div>
+    </div>
+    <div class="detail-row"><div><div class="detail-label">Телефон</div><div class="detail-value">${escapeHtml(u.phone||'—')}</div></div></div>
+    <div class="detail-row"><div><div class="detail-label">Регистрация</div><div class="detail-value">${fmtDT(u.created_at)}</div></div></div>
+    <div class="detail-row"><div><div class="detail-label">Последний вход</div><div class="detail-value">${fmtDT(u.last_login)}</div></div></div>
+    <h3 style="margin-top:18px;margin-bottom:8px;font-size:14px;color:rgba(255,255,255,0.8)">Бронирования (${hist.length})</h3>
+    ${hist.length ? hist.slice(0,8).map(b => `<div class="detail-row"><div>
+        <div class="detail-value">${fmtDate(b.date)} · ${escapeHtml((b.time||'').slice(0,5))} · ${b.guests} чел.</div>
+        <div class="detail-label">${escapeHtml(STATUS_META[b.status]?.label || b.status)}</div></div></div>`).join('')
+      : '<div class="detail-note">Нет бронирований</div>'}`;
+  document.getElementById('userDetailOverlay').classList.add('open');
+}
+function closeUserDetail() { editingUser = null; document.getElementById('userDetailOverlay').classList.remove('open'); }
+function openSetRole(id) {
+  const u = allUsers.find(x => x.id === id); if (!u) return;
+  editingUser = u;
+  document.getElementById('setRoleSelect').value = u.role;
+  document.getElementById('setRoleOverlay').classList.add('open');
+}
+function closeSetRole() { document.getElementById('setRoleOverlay').classList.remove('open'); }
+async function saveUserRole() {
+  if (!editingUser) return;
+  const role = document.getElementById('setRoleSelect').value;
+  try {
+    const { data, error } = await sb.rpc('admin_set_user_role', { p_user_id: editingUser.id, p_role: role });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast('Роль изменена: ' + (ROLE_LABELS[role] || role), 'ok');
+    closeSetRole();
+    loadUsers();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function blockUser(id, blocked) {
+  const u = allUsers.find(x => x.id === id);
+  const ok = await confirmAsk(blocked ? `Заблокировать ${u ? u.email : ''}? Заблокированный не сможет входить и бронировать.` : `Разблокировать ${u ? u.email : ''}?`);
+  if (!ok) return;
+  try {
+    const { data, error } = await sb.rpc('admin_block_user', { p_user_id: id, p_blocked: blocked });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast(blocked ? 'Пользователь заблокирован' : 'Пользователь разблокирован', 'ok');
+    loadUsers();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function deleteUser(id) {
+  const u = allUsers.find(x => x.id === id);
+  const ok = await confirmAsk(`Удалить пользователя ${u ? u.email : ''}? История бронирований сохранится.`);
+  if (!ok) return;
+  try {
+    const { data, error } = await sb.rpc('admin_delete_user', { p_user_id: id });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast('Пользователь удалён (мягко)', 'ok');
+    loadUsers();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function openInviteModal() {
+  if (!allRoles.length) { try { await loadRoles(true); } catch (e) {} }
+  document.getElementById('invEmail').value = '';
+  document.getElementById('invName').value = '';
+  document.getElementById('invPhone').value = '';
+  document.getElementById('invRole').value = 'staff';
+  document.getElementById('inviteOverlay').classList.add('open');
+}
+function closeInviteModal() { document.getElementById('inviteOverlay').classList.remove('open'); }
+async function saveInvite() {
+  const email = document.getElementById('invEmail').value.trim();
+  const name = document.getElementById('invName').value.trim();
+  const phone = document.getElementById('invPhone').value.trim();
+  const role = document.getElementById('invRole').value;
+  if (!email) { showToast('Введите email', 'err'); return; }
+  try {
+    const { data, error } = await sb.rpc('admin_invite_staff', { p_email: email, p_first_name: name, p_phone: phone, p_role: role });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast('Сотрудник приглашён', 'ok');
+    closeInviteModal();
+    loadUsers();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+
+/* ===== Tables ===== */
+async function loadTables() {
+  try {
+    const { data, error } = await sb.from('restaurant_tables').select('*').order('number', { ascending: true });
+    if (error) throw error;
+    allTables = data || [];
+    renderTables();
+  } catch (err) { if (currentSection === 'tables') showToast('Ошибка столов: ' + err.message, 'err'); }
+}
+function renderTables() {
+  const grid = document.getElementById('tablesGrid');
+  const today = new Date().toISOString().slice(0,10);
+  if (!allTables.length) { grid.innerHTML = '<div class="empty-state"><span class="icon">🪑</span><p>Столов пока нет</p></div>'; return; }
+  const canEdit = can('tables.edit'), canDel = can('tables.delete');
+  grid.innerHTML = allTables.map(t => {
+    const todayBookings = allBookings.filter(b => b.date === today && b.status === 'confirmed' && b.table_number === t.number);
+    return `<div class="table-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="t-num">${escapeHtml(t.number)}<span>${escapeHtml(t.zone || '')}</span></div>
+        <span class="t-status ${t.status}">${t.status === 'free' ? 'Свободен' : t.status === 'reserved' ? 'Резерв' : 'Занят'}</span>
+      </div>
+      <div class="t-info"><span>👥 ${t.seats} мест</span><span>сегодня: ${todayBookings.length}</span></div>
+      <div class="t-btns">
+        ${canEdit ? `<button class="btn ghost small" onclick="openTableModal('${t.id}')">✎</button>` : ''}
+        ${canDel ? `<button class="btn ghost small danger" onclick="deleteTable('${t.id}')">✕</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function openTableModal(id) {
+  editingTableId = id || null;
+  document.getElementById('tableModalTitle').textContent = id ? 'Редактировать стол' : 'Добавить стол';
+  if (id) {
+    const t = allTables.find(x => x.id === id);
+    if (t) {
+      document.getElementById('tbNumber').value = t.number;
+      document.getElementById('tbSeats').value = t.seats;
+      document.getElementById('tbZone').value = t.zone || '';
+      document.getElementById('tbStatus').value = t.status || 'free';
+    }
+  } else {
+    document.getElementById('tbNumber').value = '';
+    document.getElementById('tbSeats').value = 4;
+    document.getElementById('tbZone').value = '';
+    document.getElementById('tbStatus').value = 'free';
+  }
+  document.getElementById('tableOverlay').classList.add('open');
+}
+function closeTableModal() { editingTableId = null; document.getElementById('tableOverlay').classList.remove('open'); }
+async function saveTable() {
+  const number = document.getElementById('tbNumber').value.trim();
+  const seats = parseInt(document.getElementById('tbSeats').value, 10) || 4;
+  const zone = document.getElementById('tbZone').value.trim();
+  const status = document.getElementById('tbStatus').value;
+  if (!number) { showToast('Введите номер стола', 'err'); return; }
+  try {
+    const { data, error } = editingTableId
+      ? await sb.rpc('admin_update_table', { p_table_id: editingTableId, p_number: number, p_seats: seats, p_zone: zone, p_status: status })
+      : await sb.rpc('admin_add_table', { p_number: number, p_seats: seats, p_zone: zone });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast(editingTableId ? 'Стол обновлён' : 'Стол добавлен', 'ok');
+    closeTableModal();
+    loadTables();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function deleteTable(id) {
+  const t = allTables.find(x => x.id === id);
+  const ok = await confirmAsk(`Удалить стол ${t ? t.number : ''}?`);
+  if (!ok) return;
+  try {
+    const { data, error } = await sb.rpc('admin_delete_table', { p_table_id: id });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast('Стол удалён', 'ok');
+    loadTables();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+
+/* ===== Menu ===== */
+async function loadMenuCat() {
+  try {
+    const { data, error } = await sb.from('menu_categories').select('*').order('sort_order', { ascending: true });
+    if (!error && data) { menuCats = data; return; }
+  } catch (e) {}
+  menuCats = CAT_STATIC.map(([key, label_ru]) => ({ key, label_ru, label_en: label_ru }));
+}
+async function loadMenuItems() {
+  try {
+    await loadMenuCat();
+    const { data, error } = await sb.from('menu_items')
+      .select('*').order('sort_order', { ascending: true });
+    if (error) throw error;
+    menuItems = data || [];
+    renderMenuEditor();
+  } catch (err) { showToast('Ошибка меню: ' + err.message, 'err'); }
+}
+function catLabel(key) {
+  const c = menuCats.find(x => x.key === key);
+  if (c) return c.label_ru || key;
+  return key;
+}
+function renderMenuEditor() {
+  const grid = document.getElementById('menuGrid');
+  if (!menuItems.length) { grid.innerHTML = '<div class="empty-state"><span class="icon">🍽️</span><p>Меню пусто</p></div>'; return; }
+  const grouped = {};
+  menuItems.forEach(it => { if (!grouped[it.category]) grouped[it.category] = []; grouped[it.category].push(it); });
+  const catOrder = menuCats.map(c => c.key).concat(Object.keys(grouped).filter(k => !menuCats.some(c => c.key === k)));
+  let html = '';
+  catOrder.forEach(cat => {
+    const items = grouped[cat]; if (!items || !items.length) return;
+    html += `<div class="me-cat-header" style="font-size:17px;font-weight:700;color:var(--g700);margin:22px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--g200)">${escapeHtml(catLabel(cat))}</div>`;
+    items.forEach(it => {
+      const av = (it.available === false) ? '<span class="status-badge no_show" style="margin-left:8px">скрыто</span>' : (it.popular ? '<span class="status-badge pending" style="margin-left:8px">⭐ популярное</span>' : '');
+      html += `<div class="me-item" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--white);border-radius:14px;border:1px solid rgba(0,0,0,0.04);box-shadow:var(--sh1);margin-bottom:8px;flex-wrap:wrap">
+        <div class="me-item-icon" style="width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--g200),var(--g100));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${escapeHtml(it.icon || '🍽️')}</div>
+        <div style="flex:1;min-width:180px">
+          <h4 style="font-size:14.5px;font-weight:600;color:var(--tx1)">${escapeHtml(it.name_ru)}${it.name_en ? ' <span style="color:var(--tx4);font-weight:400;font-size:12px">(' + escapeHtml(it.name_en) + ')</span>' : ''}${av}</h4>
+          <p style="font-size:12px;color:var(--tx3)">${escapeHtml(it.desc_ru || '')}${it.weight ? ' · ' + escapeHtml(it.weight) : ''}${it.image_url ? ' · <a style="color:var(--g500)" href="' + escapeHtml(it.image_url) + '" target="_blank">фото</a>' : ''}</p>
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--g700);white-space:nowrap">${escapeHtml(it.price)} TJS</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${can('menu.edit') ? `<button class="btn ghost small" onclick="toggleMenuFlag('${it.id}','available',${!av})">${av === false || it.available === false ? 'Показать' : 'Скрыть'}</button>` : ''}
+          ${can('menu.edit') ? `<button class="btn ghost small" onclick="editMenuItem('${it.id}')">✎</button>` : ''}
+          ${can('menu.delete') ? `<button class="btn ghost small danger" onclick="deleteMenuItem('${it.id}')">✕</button>` : ''}
+        </div>
+      </div>`;
+    });
+  });
+  grid.innerHTML = html;
+}
+async function toggleMenuFlag(id, field, val) {
+  if (!can('menu.edit')) return;
+  try {
+    const { error } = await sb.from('menu_items').update({ [field]: val }).eq('id', id);
+    if (error) throw error;
+    loadMenuItems();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function openMenuModal(id) {
+  editingMenuId = id || null;
+  await loadMenuCat();
+  const sel = document.getElementById('meCategory');
+  sel.innerHTML = menuCats.map(c => `<option value="${escapeHtml(c.key)}">${escapeHtml(c.label_ru || c.key)}</option>`).join('')
+    + '<option value="__new__">+ Новая категория…</option>';
+  document.getElementById('menuModalTitle').textContent = id ? 'Редактировать блюдо' : 'Добавить блюдо';
+  const it = id && menuItems.find(m => m.id === id);
+  const v = (f, def) => it ? (it[f] ?? def) : def;
+  sel.value = it ? it.category : (menuCats[0]?.key || '');
+  if (menuCats.length && !(it && menuCats.some(c => c.key === it.category))) sel.value = '__new__';
+  document.getElementById('meNameRu').value = v('name_ru', '');
+  document.getElementById('meNameEn').value = v('name_en', '');
+  document.getElementById('meDescRu').value = v('desc_ru', '');
+  document.getElementById('meDescEn').value = v('desc_en', '');
+  document.getElementById('mePrice').value = v('price', '');
+  document.getElementById('meWeight').value = v('weight', '');
+  document.getElementById('meImage').value = v('image_url', '');
+  document.getElementById('meIcon').value = v('icon', '');
+  const sort = menuItems.filter(x => x.category === it?.category).length;
+  document.getElementById('meSort').value = v('sort_order', it ? sort : menuItems.filter(x => x.category === (sel.value)).length);
+  document.getElementById('meAvailable').checked = v('available', true);
+  document.getElementById('mePopular').checked = v('popular', false);
+  document.getElementById('menuModal').classList.add('open');
+}
+function closeMenuModal() { editingMenuId = null; document.getElementById('menuModal').classList.remove('open'); }
+function editMenuItem(id) { openMenuModal(id); }
+async function newCategory(keyHint) {
+  if (!can('menu.edit')) throw new Error('Нет права создавать категории');
+  const name = prompt('Название новой категории (RU):')?.trim();
+  if (!name) return null;
+  const key = (keyHint || name.toLowerCase().replace(/[^a-zа-я0-9]/gi,'')) || name;
+  const exists = menuCats.some(c => c.key === key);
+  if (exists) return key;
+  const sort_order = (menuCats.length ? Math.max(...menuCats.map(c => c.sort_order||0)) : 0) + 1;
+  const { error } = await sb.from('menu_categories').insert({ key, label_ru: name, label_en: name, sort_order });
+  if (error) throw error;
+  menuCats.push({ key, label_ru: name, label_en: name, sort_order });
+  return key;
+}
+async function saveMenuItem() {
+  let cat = document.getElementById('meCategory').value;
+  if (cat === '__new__') { cat = await newCategory(); if (!cat) return; }
+  const data = {
+    category: cat,
+    name_ru: document.getElementById('meNameRu').value.trim(),
+    name_en: document.getElementById('meNameEn').value.trim(),
+    desc_ru: document.getElementById('meDescRu').value.trim(),
+    desc_en: document.getElementById('meDescEn').value.trim(),
+    price: document.getElementById('mePrice').value.trim() || '0',
+    weight: document.getElementById('meWeight').value.trim(),
+    image_url: document.getElementById('meImage').value.trim(),
+    icon: document.getElementById('meIcon').value.trim() || '🍽️',
+    sort_order: parseInt(document.getElementById('meSort').value, 10) || 0,
+    available: document.getElementById('meAvailable').checked,
+    popular: document.getElementById('mePopular').checked
+  };
+  if (!data.name_ru) { showToast('Введите название блюда', 'err'); return; }
+  try {
+    const { error } = editingMenuId
+      ? await sb.from('menu_items').update(data).eq('id', editingMenuId)
+      : await sb.from('menu_items').insert(data);
+    if (error) throw error;
+    showToast('Блюдо сохранено', 'ok');
+    closeMenuModal();
+    loadMenuItems();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function deleteMenuItem(id) {
+  const ok = await confirmAsk('Удалить это блюдо из меню?');
+  if (!ok) return;
+  try {
+    const { error } = await sb.from('menu_items').delete().eq('id', id);
+    if (error) throw error;
+    showToast('Блюдо удалено', 'ok');
+    loadMenuItems();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+
+/* ===== Notifications ===== */
+async function loadNotifications() {
+  try {
+    const { data, error } = await sb.from('notifications').select('*').order('created_at', { ascending: false }).limit(100);
+    if (error) throw error;
+    allNotifs = data || [];
+    renderBellCount();
+    renderBellDrop();
+    if (currentSection === 'notifications') renderNotifSection();
+  } catch (e) { console.error(e); }
+}
+function unreadCount() { return allNotifs.filter(n => !n.is_read).length; }
+function renderBellCount() {
+  const c = unreadCount();
+  const el = document.getElementById('bellCount');
+  el.style.display = c > 0 ? '' : 'none';
+  el.textContent = c > 99 ? '99+' : c;
+}
+function toggleBell() {
+  const d = document.getElementById('bellDrop');
+  d.classList.toggle('open');
+  renderBellDrop();
+}
+function renderBellDrop() {
+  const d = document.getElementById('bellDrop');
+  const items = allNotifs.slice(0, 15);
+  d.innerHTML = `<div class="bd-head"><b>Уведомления</b><button class="btn green small" onclick="markAllRead();event.stopPropagation()">Все прочитаны</button></div>`
+    + (items.length ? items.map(n => `
+      <div class="bd-item ${n.is_read ? '' : 'unread'}" onclick="markRead('${n.id}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12.5px;font-weight:600;color:var(--tx1)">${escapeHtml(n.title)}</div>
+          <div style="font-size:11.5px;color:var(--tx3);margin-top:2px">${escapeHtml(n.message)}</div>
+          <div style="font-size:10.5px;color:var(--tx4);margin-top:3px">${fmtDT(n.created_at)}</div>
+        </div>
+      </div>`).join('')
+      : '<div class="bd-item"><div style="font-size:12.5px;color:var(--tx3)">Уведомлений пока нет</div></div>');
+}
+async function markRead(id) {
+  try { await sb.rpc('mark_notifications_read', { p_ids: [id] }); } catch (e) {}
+  loadNotifications();
+}
+async function markAllRead() {
+  try { await sb.rpc('mark_notifications_read', {}); } catch (e) {}
+  loadNotifications();
+  showToast('Все уведомления прочитаны', 'ok');
+}
+function renderNotifSection() {
+  const list = document.getElementById('notifList');
+  document.getElementById('notifHint').textContent = `Всего: ${allNotifs.length} · Непрочитано: ${unreadCount()}`;
+  if (!allNotifs.length) { list.innerHTML = '<div class="empty-state"><span class="icon">🔔</span><p>Уведомлений пока нет</p></div>'; return; }
+  const icoMap = { new_booking:'🍽️', booking_status:'🔁', new_user:'👤', user:'🛡️', staff:'🎖️', menu:'🍜', info:'ℹ️' };
+  list.innerHTML = allNotifs.map(n => `
+    <div class="notif-item ${n.is_read ? '' : 'unread'}">
+      <div class="notif-ico">${icoMap[n.type] || 'ℹ️'}</div>
+      <div style="flex:1;min-width:0">
+        <b>${escapeHtml(n.title)}</b>
+        <p>${escapeHtml(n.message)}</p>
+        <div class="notif-time">${fmtDT(n.created_at)}</div>
+      </div>
+      <div class="notif-dot ${n.is_read ? 'read' : ''}" onclick="markRead('${n.id}')" title="Прочитать"></div>
+    </div>`).join('');
+}
+
+/* ===== Reports ===== */
+async function loadReports() {
+  const days = parseInt(document.getElementById('reportDays').value, 10) || 14;
+  try {
+    const { data, error } = await sb.rpc('report_daily', { p_days: days });
+    if (error) throw error;
+    const rows = data || [];
+    renderReportSummary(rows);
+    renderReportTable(rows);
+  } catch (err) { showToast('Ошибка отчёта: ' + err.message, 'err'); }
+}
+function renderReportSummary(rows) {
+  const st = {
+    pending: rows.filter(r => r.status === 'pending').reduce((s, r) => s + Number(r.cnt), 0),
+    confirmed: rows.filter(r => r.status === 'confirmed').reduce((s, r) => s + Number(r.cnt), 0),
+    rejected: rows.filter(r => r.status === 'rejected').reduce((s, r) => s + Number(r.cnt), 0),
+    cancelled: rows.filter(r => r.status === 'cancelled').reduce((s, r) => s + Number(r.cnt), 0),
+    completed: rows.filter(r => r.status === 'completed').reduce((s, r) => s + Number(r.cnt), 0),
+    no_show: rows.filter(r => r.status === 'no_show').reduce((s, r) => s + Number(r.cnt), 0)
+  };
+  const total = rows.reduce((s, r) => s + Number(r.cnt), 0);
+  const busy = st.confirmed + st.completed;
+  const conv = total ? Math.round((busy / total) * 100) : 0;
+  document.getElementById('reportSummary').innerHTML = `
+    <div class="stat-card"><div class="label">Всего заявок</div><div class="value">${total}</div></div>
+    <div class="stat-card gold"><div class="label">Ожидают</div><div class="value yellow">${st.pending}</div></div>
+    <div class="stat-card"><div class="label">Подтверждены</div><div class="value green">${st.confirmed}</div></div>
+    <div class="stat-card"><div class="label">Завершены</div><div class="value green">${st.completed}</div></div>
+    <div class="stat-card red"><div class="label">Отклонены/отмены</div><div class="value red">${st.rejected + st.cancelled}</div></div>
+    <div class="stat-card"><div class="label">Не пришли</div><div class="value">${st.no_show}</div></div>
+    <div class="stat-card gold"><div class="label">Конверсия в приход</div><div class="value yellow">${conv}%</div></div>`;
+}
+function renderReportTable(rows) {
+  const STATUS_ORDER = ['pending','confirmed','completed','cancelled','rejected','no_show'];
+  const byDay = {};
+  rows.forEach(r => { if (!byDay[r.day]) byDay[r.day] = {}; byDay[r.day][r.status] = Number(r.cnt); });
+  const days = Object.keys(byDay).sort();
+  if (!days.length) { document.getElementById('reportWrap').innerHTML = '<div class="empty-state"><p>За период бронирований нет</p></div>'; return; }
+  let html = '<table class="report-table"><thead><tr><th>Дата</th><th>Сумма</th>';
+  STATUS_ORDER.forEach(s => { html += `<th>${STATUS_META[s].label}</th>`; });
+  html += '</tr></thead><tbody>';
+  days.forEach(day => {
+    let sum = 0; STATUS_ORDER.forEach(s => { sum += byDay[day][s] || 0; });
+    html += `<tr><td>${fmtDate(day)}</td><td class="num"><b>${sum}</b></td>`;
+    STATUS_ORDER.forEach(s => { const c = byDay[day][s] || 0; html += `<td class="num">${c || '—'}</td>`; });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('reportWrap').innerHTML = html;
+}
+
+/* ===== Roles ===== */
+async function loadRoles(silent) {
+  try {
+    const [r, p, rp] = await Promise.all([
+      sb.from('roles').select('*'),
+      sb.from('permissions').select('*'),
+      sb.from('role_permissions').select('*')
+    ]);
+    if (r.error) throw r.error; if (p.error) throw p.error; if (rp.error) throw rp.error;
+    allRoles = r.data || [];
+    allPerms = p.data || [];
+    allRolePerms = rp.data || [];
+    if (!silent) renderRoles();
+    fillRoleFilters();
+  } catch (err) { if (!silent) showToast('Ошибка ролей: ' + err.message, 'err'); }
+}
+function rolePerms(key) {
+  const keys = allRolePerms.filter(x => x.role_key === key).map(x => x.permission_key);
+  return allPerms.filter(x => key === 'super_admin' || keys.includes(x.key));
+}
+function renderRoles() {
+  const tbody = document.getElementById('rolesBody');
+  const isS = isSA();
+  tbody.innerHTML = allRoles.map(r => `
+    <tr>
+      <td style="font-weight:700">${escapeHtml(r.display)} ${r.is_system ? '<span style="font-size:10px;color:var(--tx4);font-weight:600">· системная</span>' : ''}</td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:4px;max-width:520px">${rolePerms(r.key).slice(0,8).map(p => `<span style="font-size:10px;font-weight:700;color:var(--g600);background:var(--g100);border:1px solid var(--g200);padding:2px 8px;border-radius:99px">${escapeHtml(p.grp || '')}.${escapeHtml(p.key.split('.').pop())}</span>`).join('')}${rolePerms(r.key).length > 8 ? `<span style="font-size:10px;color:var(--tx4)">+${rolePerms(r.key).length - 8}</span>` : ''}</div></td>
+      <td style="white-space:nowrap">
+        ${can('roles.edit') && (isS || !r.is_system || r.key !== 'super_admin') ? `<button class="btn ghost small" onclick="openRoleForm('${r.key}')">✎</button>` : ''}
+        ${can('roles.delete') && (isS || !r.is_system) && r.key !== 'client' ? `<button class="btn ghost small danger" onclick="deleteRole('${r.key}')">✕</button>` : ''}
+      </td>
+    </tr>`).join('');
+}
+async function openRoleForm(key) {
+  editingRole = key || null;
+  await loadRoles(true);
+  const grid = document.getElementById('rolePermsGrid');
+  const groups = {};
+  allPerms.forEach(p => { if (!groups[p.grp]) groups[p.grp] = []; groups[p.grp].push(p); });
+  const activeKeys = key ? new Set(allRolePerms.filter(x => x.role_key === key).map(x => x.permission_key)) : (key === null ? new Set() : new Set());
+  let html = '';
+  Object.keys(groups).sort().forEach(g => {
+    html += `<div style="grid-column:1/-1;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--au400);margin-top:6px">${escapeHtml(g)}</div>`;
+    groups[g].forEach(p => {
+      html += `<label class="perm-item"><input type="checkbox" value="${escapeHtml(p.key)}" ${activeKeys.has(p.key) ? 'checked' : ''}> ${escapeHtml(p.display)}</label>`;
+    });
+  });
+  grid.innerHTML = html;
+  if (key) {
+    const r = allRoles.find(x => x.key === key);
+    document.getElementById('roleModalTitle').textContent = 'Роль: ' + (r ? r.display : key);
+    document.getElementById('roleKey').value = key;
+    document.getElementById('roleKey').disabled = true;
+    document.getElementById('roleDisplay').value = r ? r.display : '';
+  } else {
+    document.getElementById('roleModalTitle').textContent = 'Создать роль';
+    document.getElementById('roleKey').value = '';
+    document.getElementById('roleKey').disabled = false;
+    document.getElementById('roleDisplay').value = '';
+  }
+  document.getElementById('roleOverlay').classList.add('open');
+}
+function closeRoleForm() { editingRole = null; document.getElementById('roleOverlay').classList.remove('open'); }
+async function saveRole() {
+  const key = document.getElementById('roleKey').value.trim().toLowerCase().replace(/\s+/g, '_');
+  const display = document.getElementById('roleDisplay').value.trim();
+  const perms = Array.from(document.querySelectorAll('#rolePermsGrid input:checked')).map(i => i.value);
+  if (!key || !display) { showToast('Укажите ключ и название роли', 'err'); return; }
+  try {
+    const rpc = editingRole ? 'admin_update_role' : 'admin_create_role';
+    const { data, error } = await sb.rpc(rpc, { p_key: editingRole || key, p_display: display, p_permissions: perms });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast(editingRole ? 'Роль обновлена' : 'Роль создана', 'ok');
+    closeRoleForm();
+    loadRoles();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+async function deleteRole(key) {
+  const ok = await confirmAsk(`Удалить роль ${key}? Пользователи этой роли станут CLIENT.`);
+  if (!ok) return;
+  try {
+    const { data, error } = await sb.rpc('admin_delete_role', { p_key: key });
+    if (error) throw error;
+    if (data && !data.ok) throw new Error(data.error);
+    showToast('Роль удалена', 'ok');
+    loadRoles();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); }
+}
+
+/* ===== Audit ===== */
+async function loadAudit() {
+  if (!can('audit.view')) return;
+  try {
+    const { data, error } = await sb.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(120);
+    if (error) throw error;
+    const rows = data || [];
+    const el = document.getElementById('auditList');
+    if (!rows.length) { el.innerHTML = '<div class="empty-state"><span class="icon">📜</span><p>Журнал пуст</p></div>'; return; }
+    el.innerHTML = rows.map(r => `
+      <div class="audit-item">
+        <div class="a-time">${fmtDT(r.created_at)}</div>
+        <div class="a-body">
+          <b>${escapeHtml(r.actor_email || 'система')}</b> <span style="font-size:10px;color:var(--tx4)">${escapeHtml(ROLE_LABELS[r.actor_role] || r.actor_role || '')}</span>
+          <div class="a-act">${escapeHtml(ACTION_LABELS[r.action] || r.action)}</div>
+          <p><b>${escapeHtml(r.target_type)}</b>: ${escapeHtml(r.target_id||'')}${r.new_value ? '<br>'+escapeHtml(JSON.stringify(r.new_value).slice(0,120)) : ''}</p>
+        </div>
+      </div>`).join('');
+  } catch (err) { showToast('Ошибка журнала: ' + err.message, 'err'); }
+}
+
+/* ===== Settings ===== */
+let settings = {};
+async function loadSettings() {
+  try {
+    const { data, error } = await sb.rpc('get_settings');
+    if (error) throw error;
+    settings = data || {};
+    renderSettings();
+  } catch (err) { showToast('Ошибка настроек: ' + err.message, 'err'); }
+}
+function renderSettings() {
+  const s = settings;
+  const editable = can('settings.edit');
+  document.getElementById('settingsHint').textContent = editable ? '' : 'Просмотр только для чтения (изменение — SUPER ADMIN / ADMIN).';
+  document.getElementById('settingsSaveWrap').style.display = editable ? '' : 'none';
+  const label = (k, name) => k === 'restaurant_name' ? 'Название ресторана' :
+                 k === 'phone' ? 'Телефон' : k === 'address' ? 'Адрес' :
+                 k === 'work_hours' ? 'Часы работы' : k === 'email' ? 'Email для уведомлений' : name;
+  const v = (k, def) => {
+    const raw = s[k];
+    if (typeof raw === 'string') return raw;
+    if (raw != null && typeof raw === 'object') return raw.v != null ? raw.v : '';
+    return def;
+  };
+  document.getElementById('settingsForm').innerHTML = `
+    <div class="field"><label>${label('restaurant_name')}</label><input type="text" id="set_restaurant_name" value="${escapeHtml(v('restaurant_name','SHVILI'))}" ${editable ? '' : 'disabled'}></div>
+    <div class="field"><label>${label('phone')}</label><input type="text" id="set_phone" value="${escapeHtml(v('phone',''))}" ${editable ? '' : 'disabled'}></div>
+    <div class="field"><label>${label('address')}</label><input type="text" id="set_address" value="${escapeHtml(v('address',''))}" ${editable ? '' : 'disabled'}></div>
+    <div class="field"><label>${label('work_hours')}</label><input type="text" id="set_work_hours" value="${escapeHtml(v('work_hours',''))}" ${editable ? '' : 'disabled'}></div>
+    <div class="field"><label>${label('email')}</label><input type="email" id="set_email" value="${escapeHtml(v('email',''))}" ${editable ? '' : 'disabled'}></div>
+    <label style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--tx2);margin-top:6px">
+      <span class="switch"><input type="checkbox" id="set_email_notifications" ${v('email_notifications','true') === 'true' || v('email_notifications','true') === true ? 'checked' : ''} ${editable ? '' : 'disabled'}><span class="slider"></span></span>
+      Email-уведомления о новых заявках
+    </label>`;
+}
+async function saveSettings() {
+  const wrap = document.getElementById('settingsSaveWrap');
+  wrap.style.display = 'none';
+  const sets = [
+    ['restaurant_name', document.getElementById('set_restaurant_name').value.trim()],
+    ['phone', document.getElementById('set_phone').value.trim()],
+    ['address', document.getElementById('set_address').value.trim()],
+    ['work_hours', document.getElementById('set_work_hours').value.trim()],
+    ['email', document.getElementById('set_email').value.trim()],
+    ['email_notifications', document.getElementById('set_email_notifications').checked.toString()]
+  ];
+  try {
+    for (const [k, v] of sets) {
+      const { data, error } = await sb.rpc('admin_set_setting', { p_key: k, p_value: (typeof v === 'string' ? v : v) });
+      if (error) throw error;
+      if (data && !data.ok) throw new Error(data.error);
+    }
+    showToast('Настройки сохранены', 'ok');
+    loadSettings();
+  } catch (err) { showToast('Ошибка: ' + err.message, 'err'); wrap.style.display = ''; }
+}
+
+/* ===== Init ===== */
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session?.user) return;
+  try { await sb.rpc('touch_last_login'); } catch (e) {}
+  await enterPanel();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  ['detailOverlay','userDetailOverlay','inviteOverlay','setRoleOverlay','tableOverlay','menuModal','roleOverlay','confirmOverlay'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.classList.contains('open')) el.classList.remove('open');
+  });
+  const bd = document.getElementById('bellDrop');
+  if (bd && bd.classList.contains('open')) bd.classList.remove('open');
+});
+
+init();
+</script>
+</body>
+</html>
